@@ -1,0 +1,14 @@
+$Qusername = Read-Host -Prompt 'Input your Qualys Username' -AsSecureString
+$Qpassword = Read-Host -Prompt 'Input your Qualys Password' -AsSecureString
+$Qpair = "$($Qusername):$($Qpassword)"
+$QencodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($Qpair))
+$basicAuthValue = $QencodedCreds
+$Headers = @{
+    "Authorization" = $basicAuthValue
+    "Content-Type" = "text/xml"
+}
+$DataFilePath = ".\data1.xml"
+$Data = Get-Content -Path $DataFilePath -Raw
+
+$response = Invoke-WebRequest -Uri "https://qualysapi.apilink" -Method Post -Headers $Headers -Body $Data -useBasicParsing
+$response
